@@ -1,8 +1,6 @@
 package com.BankApi.BankApi.model;
 
 import com.BankApi.BankApi.enums.Status;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -39,9 +37,8 @@ public class Bill {
     @Column(name = "payment_amount")
     private Double paymentAmount;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
 
     public Long getId() {

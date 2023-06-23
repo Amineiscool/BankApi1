@@ -25,8 +25,8 @@ public class Account {
     @Column
     public AccountType type;
 
-    @OneToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
     public Customer customer;
 
     public Account() {

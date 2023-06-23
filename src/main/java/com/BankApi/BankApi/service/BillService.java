@@ -4,15 +4,11 @@ import com.BankApi.BankApi.model.Account;
 import com.BankApi.BankApi.model.Bill;
 import com.BankApi.BankApi.repo.AccountRepository;
 import com.BankApi.BankApi.repo.BillRepository;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.management.Query;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
+
 
 @Service
 public class BillService {
@@ -43,10 +39,14 @@ public class BillService {
         return billRepository.findAllBillsByAccountId(id);
     }
 
+    public List<Bill> getAllBills(Long accountId) {
+        return billRepository.findAllBillsByAccountId(accountId);
+    }
     //edit-modify bill
     public Bill updateBill(Long accountId, Long billId, Bill bill) {
         Account account = accountRepository.findById(accountId).orElse(null);
         Bill bill1 = billRepository.findById(billId).orElse(null);
+
         if (bill1 != null) {
             bill1.setStatus(bill.getStatus());
             bill1.setPayee(bill.getPayee());
@@ -54,23 +54,28 @@ public class BillService {
             bill1.setCreationDate(bill.getCreationDate());
             bill1.setPaymentDate(bill.getPaymentDate());
             bill1.setRecurringDate(bill.getRecurringDate());
-            bill1.setPaymentDate(bill.getPaymentDate());
             bill1.setUpcomingPaymentDate(bill.getUpcomingPaymentDate());
             bill1.setPaymentAmount(bill.getPaymentAmount());
+
+            if (account != null) {
+                bill1.setAccount(account);
+            }
+
+            return billRepository.save(bill1);
         }
-        //   bill.setAccount(Optional.ofNullable(account));
-        return billRepository.save(bill);
+
+        return null; // Handle the case when the bill is not found
     }
 
     public void deleteBill(Long billId) {
         billRepository.deleteById(billId);
     }
 
-    public Bill getBillById(Long accountId) {
+    public Bill getBillById(Long billId) {
 
 
-        return (Bill) billRepository.findByAccountId(accountId);
+        return billRepository.findById(billId).orElse(null);
+    }
 
         // ...
     }
-}
