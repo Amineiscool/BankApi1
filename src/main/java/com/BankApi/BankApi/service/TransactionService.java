@@ -1,6 +1,6 @@
 package com.BankApi.BankApi.service;
 
-import com.BankApi.BankApi.enums.Type;
+import com.BankApi.BankApi.enums.TransactionType;
 import com.BankApi.BankApi.errorException.exception.ResourceNotFoundException;
 import com.BankApi.BankApi.model.Account;
 import com.BankApi.BankApi.model.Transaction;
@@ -10,10 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static com.BankApi.BankApi.enums.Type.DEPOSIT;
-import static com.BankApi.BankApi.enums.Type.P2P;
-import static com.BankApi.BankApi.enums.Type.WITHDRAWAL;
 
 @Service
 public class TransactionService {
@@ -27,71 +23,42 @@ public class TransactionService {
         this.accountRepository = accountRepository;
     }
 
-    public Transaction deposit(Long accountId, Transaction transaction) {
+    public Transaction createDeposit(Long accountId, Transaction transaction) {
         Account account = accountRepository.findById(accountId).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
         );
-        account.balance += transaction.getAmount();
+        account.setBalance(account.getBalance() + transaction.getAmount());
         accountRepository.save(account);
-        transaction.setPayeeAccount(account);
-        transaction.setType(DEPOSIT);
+        transaction.setType(TransactionType.DEPOSIT);
+        transaction.setAccount(account);
         return transactionRepository.save(transaction);
     }
 
-    public Transaction withdraw(Long accountId, Transaction transaction) {
+    public Transaction createWithdrawal(Long accountId, Transaction transaction) {
         Account account = accountRepository.findById(accountId).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
-        );
-        account.balance -= transaction.getAmount();
-        accountRepository.save(account);
-        transaction.setPayerAccount(account);
-        transaction.setType(WITHDRAWAL);
-        return transactionRepository.save(transaction);
-    }
-
-    public Transaction p2p(Transaction transaction) {
-        Long payerId = transaction.getPayerAccount().id;
-        Account payerAccount = accountRepository.findById(payerId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", payerId))
-        );
-        Long payeeId = transaction.getPayeeAccount().id;
-        Account payeeAccount = accountRepository.findById(payeeId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", payeeId))
         );
         double amount = transaction.getAmount();
-        payerAccount.balance -= amount;
-        payeeAccount.balance += amount;
-        accountRepository.saveAll(List.of(payerAccount, payeeAccount));
-        transaction.setType(P2P);
+        if (account.getBalance() < amount) {
+            throw new InsufficientBalanceException(String.format("Insufficient balance in Account with ID %s", accountId));
+        }
+        account.setBalance(account.getBalance() - amount);
+        accountRepository.save(account);
+        transaction.setType(TransactionType.WITHDRAWAL);
+        transaction.setAccount(account);
         return transactionRepository.save(transaction);
     }
 
     public List<Transaction> getAllDepositsByAccountId(Long accountId) {
-        Account account = accountRepository.findById(accountId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
-        );
         return transactionRepository.findAllDepositsByAccountId(accountId);
     }
 
     public List<Transaction> getAllWithdrawalsByAccountId(Long accountId) {
-        Account account = accountRepository.findById(accountId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
-        );
         return transactionRepository.findAllWithdrawalsByAccountId(accountId);
     }
 
     public List<Transaction> getAllTransactionsByAccountId(Long accountId) {
-        Account account = accountRepository.findById(accountId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
-        );
         return transactionRepository.findAllTransactionsByAccountId(accountId);
-    }
-
-    public List<Transaction> getAllP2PsByAccountId(Long accountId) {
-        Account account = accountRepository.findById(accountId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
-        );
-        return transactionRepository.findAllP2PsByAccountId(accountId);
     }
 
     public List<Transaction> getAllDeposits() {
@@ -102,10 +69,6 @@ public class TransactionService {
         return transactionRepository.findAllWithdrawals();
     }
 
-    public List<Transaction> getAllP2Ps() {
-        return transactionRepository.findAllP2Ps();
-    }
-
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
@@ -114,7 +77,7 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Deposit with ID %s not found", id))
         );
-        if(!transaction.getType().equals(DEPOSIT)) {
+        if (!transaction.getType().equals(TransactionType.DEPOSIT)) {
             throw new RuntimeException(String.format("Transaction with ID %s is not a Deposit", id));
         }
         return transaction;
@@ -124,18 +87,8 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Withdrawal with ID %s not found", id))
         );
-        if(!transaction.getType().equals(WITHDRAWAL)) {
+        if (!transaction.getType().equals(TransactionType.WITHDRAWAL)) {
             throw new RuntimeException(String.format("Transaction with ID %s is not a Withdrawal", id));
-        }
-        return transaction;
-    }
-
-    public Transaction getP2PById(Long id) {
-        Transaction transaction = transactionRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Withdrawal with ID %s not found", id))
-        );
-        if(!transaction.getType().equals(P2P)) {
-            throw new RuntimeException(String.format("Transaction with ID %s is not a P2P", id));
         }
         return transaction;
     }
@@ -146,6 +99,27 @@ public class TransactionService {
         );
     }
 
+    public void deleteDeposit(Long depositId) {
+        Transaction deposit = getDepositById(depositId);
+        transactionRepository.delete(deposit);
+    }
+
+    public void deleteWithdrawal(Long withdrawalId) {
+        Transaction withdrawal = getWithdrawalById(withdrawalId);
+        transactionRepository.delete(withdrawal);
+    }
+
+    public Transaction updateDeposit(Long depositId, Transaction updatedTransaction) {
+        Transaction deposit = getDepositById(depositId);
+        deposit.setAmount(updatedTransaction.getAmount());
+        deposit.setDescription(updatedTransaction.getDescription());
+        return transactionRepository.save(deposit);
+    }
+
+    public Transaction updateWithdrawal(Long withdrawalId, Transaction updatedTransaction) {
+        Transaction withdrawal = getWithdrawalById(withdrawalId);
+        withdrawal.setAmount(updatedTransaction.getAmount());
+        withdrawal.setDescription(updatedTransaction.getDescription());
+        return transactionRepository.save(withdrawal);
+    }
 }
-
-

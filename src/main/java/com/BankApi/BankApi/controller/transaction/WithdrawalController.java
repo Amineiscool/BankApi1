@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/accounts")
 public class WithdrawalController {
 
     private final TransactionService transactionService;
@@ -19,22 +20,22 @@ public class WithdrawalController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/accounts/{accountId}/withdrawals")
+    @PostMapping("/{accountId}/withdrawals")
     public ResponseEntity<Transaction> withdraw(@PathVariable Long accountId, @RequestBody Transaction transaction) {
-        return new ResponseEntity<>(transactionService.withdraw(accountId, transaction), HttpStatus.CREATED);
+        return new ResponseEntity<>(transactionService.createWithdrawal(accountId, transaction), HttpStatus.CREATED);
     }
 
-    @GetMapping("/accounts/{accountId}/withdrawals")
+    @GetMapping("/{accountId}/withdrawals")
     public ResponseEntity<List<Transaction>> getAllWithdrawalsByAccountId(@PathVariable Long accountId) {
         return new ResponseEntity<>(transactionService.getAllWithdrawalsByAccountId(accountId), HttpStatus.OK);
     }
 
-    @GetMapping("/accounts/withdrawals/{withdrawalId}")
+    @GetMapping("/withdrawals/{withdrawalId}")
     public ResponseEntity<Transaction> getWithdrawalById(@PathVariable Long withdrawalId) {
         return new ResponseEntity<>(transactionService.getWithdrawalById(withdrawalId), HttpStatus.OK);
     }
 
-    @GetMapping("/withdrawals/all")
+    @GetMapping("/withdrawals")
     public ResponseEntity<List<Transaction>> getAllWithdrawals() {
         return new ResponseEntity<>(transactionService.getAllWithdrawals(), HttpStatus.OK);
     }

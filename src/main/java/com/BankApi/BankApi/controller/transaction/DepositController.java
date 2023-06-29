@@ -23,7 +23,7 @@ public class DepositController {
 
     @PostMapping("/{accountId}/deposits")
     public ResponseEntity<Transaction> createDeposit(@PathVariable Long accountId, @RequestBody Transaction transaction) {
-        return new ResponseEntity<>(transactionService.deposit(accountId, transaction), HttpStatus.CREATED);
+        return new ResponseEntity<>(transactionService.createDeposit(accountId, transaction), HttpStatus.CREATED);
     }
 
     @GetMapping("/{accountId}/deposits")

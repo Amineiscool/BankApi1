@@ -2,7 +2,7 @@ package com.BankApi.BankApi.model;
 
 import com.BankApi.BankApi.enums.Medium;
 import com.BankApi.BankApi.enums.Status;
-import com.BankApi.BankApi.enums.Type;
+import com.BankApi.BankApi.enums.TransactionType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,7 +16,7 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Type type;
+    private TransactionType type;
 
     @Column(name = "transaction_date")
     private String transactionDate;
@@ -47,11 +47,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public Type getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(TransactionType type) {
         this.type = type;
     }
 

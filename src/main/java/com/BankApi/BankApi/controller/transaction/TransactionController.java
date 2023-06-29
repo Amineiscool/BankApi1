@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.ListResourceBundle;
-
-
 @RestController
 public class TransactionController {
 
@@ -33,5 +31,5 @@ public class TransactionController {
     public ResponseEntity<Transaction> getTransactionById(@PathVariable Long transactionId) {
         return new ResponseEntity<>(transactionService.getTransactionById(transactionId), HttpStatus.OK);
     }
-
 }
+
