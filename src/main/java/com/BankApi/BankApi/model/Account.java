@@ -11,30 +11,28 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    public Long id;
+    private Long id;
 
     @Column
-    public String nickname;
+    private String nickname;
 
     @Column
-    public Integer rewards;
+    private Integer rewards;
 
     @Column
-    public Double balance;
+    private Double balance;
 
     @Column
-    public AccountType type;
+    private AccountType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
-    public Customer customer;
+    private Customer customer;
 
     public Account() {
-
     }
 
-    public Account(Long id, String nickname, Integer rewards, Double balance, AccountType type, Customer customer) {
-        this.id = id;
+    public Account(String nickname, Integer rewards, Double balance, AccountType type, Customer customer) {
         this.nickname = nickname;
         this.rewards = rewards;
         this.balance = balance;
@@ -44,10 +42,6 @@ public class Account {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNickname() {
