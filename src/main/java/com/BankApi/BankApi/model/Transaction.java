@@ -16,6 +16,7 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "transaction_type")
     private TransactionType type;
 
     @Column(name = "transaction_date")
@@ -38,6 +39,8 @@ public class Transaction {
     @JoinColumn(name = "payer_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Account payerAccount;
+
+    // Constructors, getters, and setters
 
     public Long getId() {
         return id;
@@ -110,5 +113,4 @@ public class Transaction {
     public void setPayerAccount(Account account) {
         this.payerAccount = account;
     }
-
 }

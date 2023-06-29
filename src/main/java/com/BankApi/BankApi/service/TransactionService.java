@@ -23,41 +23,44 @@ public class TransactionService {
         this.accountRepository = accountRepository;
     }
 
-    public Transaction createDeposit(Long accountId, Transaction transaction) {
+    public Transaction deposit(Long accountId, Transaction transaction) {
         Account account = accountRepository.findById(accountId).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
         );
         account.setBalance(account.getBalance() + transaction.getAmount());
         accountRepository.save(account);
         transaction.setType(TransactionType.DEPOSIT);
-        transaction.setAccount(account);
         return transactionRepository.save(transaction);
     }
 
-    public Transaction createWithdrawal(Long accountId, Transaction transaction) {
+    public Transaction withdraw(Long accountId, Transaction transaction) {
         Account account = accountRepository.findById(accountId).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
         );
-        double amount = transaction.getAmount();
-        if (account.getBalance() < amount) {
-            throw new InsufficientBalanceException(String.format("Insufficient balance in Account with ID %s", accountId));
-        }
-        account.setBalance(account.getBalance() - amount);
+        account.setBalance(account.getBalance() - transaction.getAmount());
         accountRepository.save(account);
         transaction.setType(TransactionType.WITHDRAWAL);
-        transaction.setAccount(account);
         return transactionRepository.save(transaction);
     }
 
     public List<Transaction> getAllDepositsByAccountId(Long accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
+        );
         return transactionRepository.findAllDepositsByAccountId(accountId);
     }
 
     public List<Transaction> getAllWithdrawalsByAccountId(Long accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
+        );
         return transactionRepository.findAllWithdrawalsByAccountId(accountId);
     }
 
     public List<Transaction> getAllTransactionsByAccountId(Long accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
+        );
         return transactionRepository.findAllTransactionsByAccountId(accountId);
     }
 
@@ -100,26 +103,36 @@ public class TransactionService {
     }
 
     public void deleteDeposit(Long depositId) {
-        Transaction deposit = getDepositById(depositId);
-        transactionRepository.delete(deposit);
+        transactionRepository.deleteById(depositId);
     }
 
     public void deleteWithdrawal(Long withdrawalId) {
-        Transaction withdrawal = getWithdrawalById(withdrawalId);
-        transactionRepository.delete(withdrawal);
+        transactionRepository.deleteById(withdrawalId);
     }
 
     public Transaction updateDeposit(Long depositId, Transaction updatedTransaction) {
-        Transaction deposit = getDepositById(depositId);
-        deposit.setAmount(updatedTransaction.getAmount());
-        deposit.setDescription(updatedTransaction.getDescription());
-        return transactionRepository.save(deposit);
+        Transaction transaction = transactionRepository.findById(depositId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Deposit with ID %s not found", depositId))
+        );
+
+        transaction.setAmount(updatedTransaction.getAmount());
+        transaction.setDate(updatedTransaction.getDate());
+        // Update any other properties if necessary
+        // ...
+
+        return transactionRepository.save(transaction);
     }
 
     public Transaction updateWithdrawal(Long withdrawalId, Transaction updatedTransaction) {
-        Transaction withdrawal = getWithdrawalById(withdrawalId);
-        withdrawal.setAmount(updatedTransaction.getAmount());
-        withdrawal.setDescription(updatedTransaction.getDescription());
-        return transactionRepository.save(withdrawal);
+        Transaction transaction = transactionRepository.findById(withdrawalId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Withdrawal with ID %s not found", withdrawalId))
+        );
+
+        transaction.setAmount(updatedTransaction.getAmount());
+        transaction.setDate(updatedTransaction.getDate());
+        // Update any other properties if necessary
+        // ...
+
+        return transactionRepository.save(transaction);
     }
 }
