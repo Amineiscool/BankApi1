@@ -1,6 +1,7 @@
 package com.BankApi.BankApi.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,9 +19,19 @@ public class Customer {
     @Column(name = "last_name")
     private String lastName;
 
-    @ManyToMany
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "customer_id")
     private Set<Address> addresses;
+
+    public void deleteAddress(Address address) {
+        addresses.remove(address);
+        address.setCustomer(null);
+    }
+
+
+    public Customer() {
+        this.addresses = new HashSet<>(); // Initialize addresses property
+    }
 
     public Long getId() {
         return id;

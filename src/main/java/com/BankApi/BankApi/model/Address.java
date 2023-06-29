@@ -31,6 +31,12 @@ public class Address {
     @Column
     private String zip;
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+
+
     public Long getId() {
         return id;
     }
@@ -77,6 +83,9 @@ public class Address {
 
     public void setZip(String zip) {
         this.zip = zip;
+    }
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override

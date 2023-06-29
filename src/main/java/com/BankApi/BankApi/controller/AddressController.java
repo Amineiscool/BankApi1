@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNullApi;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -59,6 +58,8 @@ public class AddressController {
     public ResponseEntity<Void> deleteAddress(@PathVariable Long id) {
         logger.warn("Deleting address:", id);
         addressService.deleteAddress(id);
+
+        CustomReply message=new CustomReply(" 201","delete address succeccful");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

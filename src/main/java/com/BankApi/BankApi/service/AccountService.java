@@ -37,32 +37,32 @@ public class AccountService {
         );
     }
 
-    // Add a new account
-    public Account addAccount(Account accountRequest) {
-        Customer customer = accountRequest.customer;
-        // Create a new customer if the customer ID is null
-        if (customer.getId() == null) customerService.createCustomer(customer);
-        try {
-            return accountRepository.save(accountRequest);
-        } catch (Exception exception) {
-            throw new RuntimeException("Error adding account");
-        }
-    }
+//    // Add a new account
+//    public Account addAccount(Account accountRequest) {
+//        Customer customer = accountRequest.customer;
+//        // Create a new customer if the customer ID is null
+//        if (customer.getId() == null) customerService.createCustomer(customer);
+//        try {
+//            return accountRepository.save(accountRequest);
+//        } catch (Exception exception) {
+//            throw new RuntimeException("Error adding account");
+//        }
+//    }
 
     // Update an existing account
-    public Account updateAccount(Long id, Account accountRequest) {
-        Account account = accountRepository.findById(id).orElse(new Account());
-        // Update account details
-        account.nickname = accountRequest.nickname;
-        account.balance = accountRequest.balance;
-        account.rewards = accountRequest.rewards;
-        account.customer = accountRequest.customer;
-        try {
-            return accountRepository.save(account);
-        } catch (Exception exception) {
-            throw new RuntimeException("Error updating account");
-        }
-    }
+//    public Account updateAccount(Long id, Account accountRequest) {
+//        Account account = accountRepository.findById(id).orElse(new Account());
+//        // Update account details
+//        account.nickname = accountRequest.nickname;
+//        account.balance = accountRequest.balance;
+//        account.rewards = accountRequest.rewards;
+//        account.customer = accountRequest.customer;
+//        try {
+//            return accountRepository.save(account);
+//        } catch (Exception exception) {
+//            throw new RuntimeException("Error updating account");
+//        }
+//    }
 
     // Delete an account
     public void deleteAccount(Long id) {

@@ -14,7 +14,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
-
     private final CustomerService customerService;
 
     public CustomerController(CustomerService customerService) {
@@ -38,20 +37,18 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<CustomReply> createCustomer(@RequestBody Customer customer) {
         Customer createdCustomer = customerService.createCustomer(customer);
-        CustomReply message= new CustomReply("202","Accepted bill modification");
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCustomer);
-
+        CustomReply message = new CustomReply("200", "Customer account created");
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) throws CustomerNotFoundException {
-
-        CustomReply message=new CustomReply("200","Customer account updated");
+    @PutMapping("{id}")
+    public ResponseEntity<CustomReply> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) throws CustomerNotFoundException {
+        CustomReply message = new CustomReply("200", "Customer account updated");
         Customer updatedCustomer = customerService.updateCustomer(id, customer);
         if (updatedCustomer != null) {
-            return ResponseEntity.ok(updatedCustomer);
+            return ResponseEntity.ok(message);
         } else {
             throw new CustomerNotFoundException("Customer not found with ID: " + id);
         }
@@ -60,10 +57,6 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {
         boolean deleted = customerService.deleteCustomer(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            throw new CustomerNotFoundException("Customer not found with ID: " + id);
-        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
