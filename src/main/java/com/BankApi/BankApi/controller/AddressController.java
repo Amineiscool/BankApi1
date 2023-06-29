@@ -3,6 +3,7 @@ package com.BankApi.BankApi.controller;
 import com.BankApi.BankApi.model.Address;
 import com.BankApi.BankApi.reply.CustomReply;
 import com.BankApi.BankApi.service.AddressService;
+//import jdk.internal.access.JavaIOFileDescriptorAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +47,10 @@ public class AddressController {
         return new ResponseEntity<>(address, HttpStatus.OK);
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<Address> updateAddress(@PathVariable Long id, @RequestBody Address address) {
         logger.debug("Updating address : , New address:", id, address);
-        CustomReply message= new CustomReply("202","Accepted address modification");
+        CustomReply message= new CustomReply(202,"Accepted address modification");
         return new ResponseEntity<>(addressService.updateAddress(id, address), HttpStatus.OK);
     }
 
@@ -59,7 +59,7 @@ public class AddressController {
         logger.warn("Deleting address:", id);
         addressService.deleteAddress(id);
 
-        CustomReply message=new CustomReply(" 201","delete address succeccful");
+        CustomReply message=new CustomReply(201,"delete address successful");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

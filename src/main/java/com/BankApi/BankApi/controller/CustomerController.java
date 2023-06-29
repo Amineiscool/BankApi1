@@ -39,13 +39,13 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomReply> createCustomer(@RequestBody Customer customer) {
         Customer createdCustomer = customerService.createCustomer(customer);
-        CustomReply message = new CustomReply("200", "Customer account created");
+        CustomReply message = new CustomReply(200, "Customer account created");
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<CustomReply> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) throws CustomerNotFoundException {
-        CustomReply message = new CustomReply("200", "Customer account updated");
+        CustomReply message = new CustomReply(200, "Customer account updated");
         Customer updatedCustomer = customerService.updateCustomer(id, customer);
         if (updatedCustomer != null) {
             return ResponseEntity.ok(message);

@@ -1,6 +1,5 @@
 package com.BankApi.BankApi.controller;
 
-import com.BankApi.BankApi.model.Account;
 import com.BankApi.BankApi.model.Bill;
 import com.BankApi.BankApi.reply.CustomReply;
 import com.BankApi.BankApi.repo.AccountRepository;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/accounts/{accountId}/bills")
@@ -27,7 +25,7 @@ public class BillController {
     @PostMapping
     public ResponseEntity<CustomReply> createBill(@PathVariable Long accountId, @RequestBody Bill bill) {
         billService.addBill(accountId, bill);
-        CustomReply message=new CustomReply(" 201","Created bill and added it to the account" );
+        CustomReply message=new CustomReply( 201,"Created bill and added it to the account");
         return  ResponseEntity.status( HttpStatus.CREATED).body(message);
     }
 
@@ -40,7 +38,7 @@ public class BillController {
     @PutMapping("/{billId}")
     public ResponseEntity<CustomReply> updateBill(@PathVariable Long accountId, @PathVariable Long billId, @RequestBody Bill bill) {
         billService.updateBill(accountId, billId, bill);
-        CustomReply message= new CustomReply("202","Accepted customer modification");
+        CustomReply message= new CustomReply(202,"Accepted customer modification");
         return  ResponseEntity.status( HttpStatus.OK).body(message);
     }
 
