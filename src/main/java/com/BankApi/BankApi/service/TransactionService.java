@@ -1,6 +1,7 @@
 package com.BankApi.BankApi.service;
 
 import com.BankApi.BankApi.enums.TransactionType;
+import com.BankApi.BankApi.errorException.exception.InsufficientFundsException;
 import com.BankApi.BankApi.errorException.exception.ResourceNotFoundException;
 import com.BankApi.BankApi.model.Account;
 import com.BankApi.BankApi.model.Transaction;
