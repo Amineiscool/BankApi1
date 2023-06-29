@@ -41,5 +41,14 @@ public class DepositController {
         return new ResponseEntity<>(transactionService.getAllDeposits(), HttpStatus.OK);
     }
 
-}
+    @PutMapping("/deposits/{depositId}")
+    public ResponseEntity<Transaction> updateDeposit(@PathVariable Long depositId, @RequestBody Transaction transaction) {
+        return new ResponseEntity<>(transactionService.updateDeposit(depositId, transaction), HttpStatus.OK);
+    }
 
+    @DeleteMapping("/deposits/{depositId}")
+    public ResponseEntity<Void> deleteDeposit(@PathVariable Long depositId) {
+        transactionService.deleteDeposit(depositId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}

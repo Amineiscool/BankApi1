@@ -29,14 +29,24 @@ public class WithdrawalController {
         return new ResponseEntity<>(transactionService.getAllWithdrawalsByAccountId(accountId), HttpStatus.OK);
     }
 
-    @GetMapping("/withdrawals/{withdrawalId}")
+    @GetMapping("/accounts/withdrawals/{withdrawalId}")
     public ResponseEntity<Transaction> getWithdrawalById(@PathVariable Long withdrawalId) {
         return new ResponseEntity<>(transactionService.getWithdrawalById(withdrawalId), HttpStatus.OK);
     }
 
-    @GetMapping("/withdrawals")
+    @GetMapping("/withdrawals/all")
     public ResponseEntity<List<Transaction>> getAllWithdrawals() {
         return new ResponseEntity<>(transactionService.getAllWithdrawals(), HttpStatus.OK);
     }
 
+    @PutMapping("/withdrawals/{withdrawalId}")
+    public ResponseEntity<Transaction> updateWithdrawal(@PathVariable Long withdrawalId, @RequestBody Transaction transaction) {
+        return new ResponseEntity<>(transactionService.updateWithdrawal(withdrawalId, transaction), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/withdrawals/{withdrawalId}")
+    public ResponseEntity<Void> deleteWithdrawal(@PathVariable Long withdrawalId) {
+        transactionService.deleteWithdrawal(withdrawalId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
