@@ -21,6 +21,7 @@ public class AccountService {
         this.customerService = customerService;
     }
 
+    // Retrieve all accounts
     public List<Account> getAllAccounts() {
         try {
             return accountRepository.findAll();
@@ -29,20 +30,29 @@ public class AccountService {
         }
     }
 
+    // Retrieve an account by its ID
     public Account getAccountById(Long id) {
         return accountRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Account with ID %s not found", id))
         );
     }
 
+    // Add a new account
     public Account addAccount(Account accountRequest) {
         Customer customer = accountRequest.customer;
-        if(customer.getId() == null) customerService.createCustomer(customer);
-        return accountRepository.save(accountRequest);
+        // Create a new customer if the customer ID is null
+        if (customer.getId() == null) customerService.createCustomer(customer);
+        try {
+            return accountRepository.save(accountRequest);
+        } catch (Exception exception) {
+            throw new RuntimeException("Error adding account");
+        }
     }
 
+    // Update an existing account
     public Account updateAccount(Long id, Account accountRequest) {
         Account account = accountRepository.findById(id).orElse(new Account());
+        // Update account details
         account.nickname = accountRequest.nickname;
         account.balance = accountRequest.balance;
         account.rewards = accountRequest.rewards;
@@ -54,12 +64,15 @@ public class AccountService {
         }
     }
 
+    // Delete an account
     public void deleteAccount(Long id) {
-        accountRepository.findById(id).orElseThrow(
+        // Retrieve the account by its ID, or throw an exception if not found
+        Account account = accountRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("Account with ID %s not found", id))
         );
         try {
-            accountRepository.deleteById(id);
+            // Delete the account
+            accountRepository.delete(account);
         } catch (Exception exception) {
             throw new RuntimeException("Error deleting account");
         }
