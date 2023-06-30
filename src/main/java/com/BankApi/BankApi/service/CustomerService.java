@@ -1,5 +1,6 @@
 package com.BankApi.BankApi.service;
 
+import com.BankApi.BankApi.errorException.CustomerNotFoundException;
 import com.BankApi.BankApi.model.Address;
 import com.BankApi.BankApi.model.Customer;
 import com.BankApi.BankApi.repo.AddressRepository;
@@ -36,23 +37,46 @@ public class CustomerService {
         }
         customer.setAddresses(addresses);
         Customer createdCustomer = customerRepository.save(customer);
-
-        // Fetch the addresses again to populate the fields with database values
-        Set<Address> createdAddresses = new HashSet<>();
-        for (Address address : createdCustomer.getAddresses()) {
-            createdAddresses.add(addressRepository.findById(address.getId()).orElse(null));
-        }
-        createdCustomer.setAddresses(createdAddresses);
-
         return createdCustomer;
     }
 
+    public Customer updateCustomer(Long id, Customer updatedCustomer) throws CustomerNotFoundException {
+        Customer existingCustomer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with ID: " + id));
 
-    public Customer updateCustomer(Long id, Customer updatedCustomer) {
-        Customer existingCustomer = customerRepository.findById(id).orElse(new Customer());
         existingCustomer.setFirstName(updatedCustomer.getFirstName());
         existingCustomer.setLastName(updatedCustomer.getLastName());
-        existingCustomer.setAddresses(updatedCustomer.getAddresses());
+
+        Set<Address> updatedAddresses = new HashSet<>();
+
+        for (Address address : updatedCustomer.getAddresses()) {
+            if (address.getId() != null) {
+                // Existing address, update its properties
+                Address existingAddress = addressRepository.findById(address.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Address not found with ID: " + address.getId()));
+
+                existingAddress.setStreetNumber(address.getStreetNumber());
+                existingAddress.setStreetName(address.getStreetName());
+                existingAddress.setCity(address.getCity());
+                existingAddress.setState(address.getState());
+                existingAddress.setZip(address.getZip());
+
+                updatedAddresses.add(existingAddress);
+            } else {
+                // New address, save it and set the customer
+                address.setCustomer(existingCustomer);
+                Address savedAddress = addressRepository.save(address);
+                updatedAddresses.add(savedAddress);
+            }
+        }
+
+        // Remove any addresses that were not included in the update
+        existingCustomer.getAddresses().removeIf(address -> !updatedAddresses.contains(address));
+
+        // Update the addresses of the existing customer
+        existingCustomer.getAddresses().clear();
+        existingCustomer.getAddresses().addAll(updatedAddresses);
+
         return customerRepository.save(existingCustomer);
     }
 
@@ -76,7 +100,6 @@ public class CustomerService {
         }
     }
 }
-
 
 
 

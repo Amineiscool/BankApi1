@@ -1,5 +1,6 @@
 package com.BankApi.BankApi.controller;
 
+import com.BankApi.BankApi.errorException.exception.ResourceNotFoundException;
 import com.BankApi.BankApi.model.Bill;
 import com.BankApi.BankApi.reply.CustomReply;
 import com.BankApi.BankApi.repo.AccountRepository;
@@ -22,12 +23,17 @@ public class BillController {
         this.accountRepository = accountRepository;
     }
 
-    @PostMapping
+    @PostMapping("/{accountId}")
     public ResponseEntity<CustomReply> createBill(@PathVariable Long accountId, @RequestBody Bill bill) {
-        billService.addBill(accountId, bill);
-        CustomReply message=new CustomReply( 201,"Created bill and added it to the account");
-        return  ResponseEntity.status( HttpStatus.CREATED).body(message);
+        try {
+            Bill createdBill = billService.createBill(bill, accountId);
+            CustomReply message = new CustomReply(201, "Created bill and added it to the account");
+            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomReply(404, e.getMessage()));
+        }
     }
+
 
 
     @GetMapping

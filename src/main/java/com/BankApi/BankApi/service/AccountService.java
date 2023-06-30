@@ -15,106 +15,58 @@ import java.util.Optional;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    public AccountService(AccountRepository accountRepository, CustomerService customerService) {
+    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository) {
         this.accountRepository = accountRepository;
-        this.customerService = customerService;
+        this.customerRepository = customerRepository;
     }
 
-
-    protected void verifyAccount(Long accountId, String message) throws ResourceNotFoundException {
-        if(!(this.accountRepository.existsById(accountId))) {
-            throw (new ResourceNotFoundException(message));
-        }
+    public List<Account> getAllAccounts() {
+        return accountRepository.findAll();
     }
 
-    protected  void verifyCustomer (Long customerId, String message) throws ResourceNotFoundException {
-        if(!(this.customerRepository.existsById(customerId))) {
-            throw (new ResourceNotFoundException(message));
-        }
+    public Account getAccountById(Long accountId) throws ResourceNotFoundException {
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
     }
 
-   /* public List<Account> getAllAccounts() {
-        try {
-            return (List<Account>) accountRepository.findAll();
-        } catch (Exception exception) {
-            throw new RuntimeException("Error fetching all accounts");
-        }
-    }*/
+    public Account createAccount(Account accountInfo, Long customerId) throws ResourceNotFoundException {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
-    public Iterable<Account> getAllAccounts(){
-        return this.accountRepository.findAll();
-    }
-
-
-    /*public Account getAccountById(Long accountId) {
-        return this.accountRepository.findById(accountId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", accountId))
-        );
-    }*/
-
-    public Account getAccountById(Long accountId, String exceptionMessage){
-        this.verifyAccount(accountId,exceptionMessage);
-        return this.accountRepository.findById(accountId).get();
-    }
-
-    public Account createAccount(Account accountInfo, Long customerId, int code, String message) {
-        this.verifyCustomer(customerId, message);
         Account account = new Account();
-        // account.setType(AccountType.);
-        account.setBalance(0.0);
         account.setNickname(accountInfo.getNickname());
         account.setRewards(0);
-        account.setCustomer(this.customerRepository.findById(customerId).get());
-        return this.accountRepository.save(account);
+        account.setBalance(accountInfo.getBalance());
+        account.setType(accountInfo.getType());
+        account.setCustomer(customer);
 
-        /*Customer customer = accountRequest.customer;
-        if(customer.getId() == null) customerService.createCustomer(customer);
-        return accountRepository.save(accountRequest);*/
+        return accountRepository.save(account);
     }
 
-   /* public Account updateAccount(Long id, Account accountRequest) {
-        Account account = accountRepository.findById(id).orElse(new Account());
-        account.nickname = accountRequest.nickname;
-        account.balance = accountRequest.balance;
-        account.rewards = accountRequest.rewards;
-        account.customer = accountRequest.customer;
-        try {
-            return accountRepository.save(account);
-        } catch (Exception exception) {
-            throw new RuntimeException("Error updating account");
-        }
-    }*/
 
+    public Account updateAccount(Long accountId, Account accountInfo) throws ResourceNotFoundException {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
-    public Account updateAccount (Long accountId, Account accountInfo){
-        Account accountUpdate = this.accountRepository.findById(accountId).get();
-        return this.accountRepository.save(accountUpdate);
+        account.setNickname(accountInfo.getNickname());
+        account.setRewards(accountInfo.getRewards());
+        account.setBalance(accountInfo.getBalance());
+        account.setType(accountInfo.getType());
+
+        return accountRepository.save(account);
     }
 
-   /* public void deleteAccount(Long id) {
-        accountRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("Account with ID %s not found", id))
-        );
-        try {
-            accountRepository.deleteById(id);
-        } catch (Exception exception) {
-            throw new RuntimeException("Error deleting account");
-        }
-    }*/
-
-    public void deleteAccount (Long accountId){
-        this.accountRepository.deleteById(accountId);
+    public void deleteAccount(Long accountId) {
+        accountRepository.deleteById(accountId);
     }
-
-    public Optional<Account> getAccountsByCustomerId(long customerId, String message){
-        this.verifyCustomer(customerId,message);
-        return this.accountRepository.findById(customerId);
-    }
-
+//
+//    public List<Account> getAccountsByCustomerId(Long customerId) throws ResourceNotFoundException {
+//        customerRepository.findById(customerId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+//
+//        return accountRepository.findByCustomerId(customerId);
+//    }
 }

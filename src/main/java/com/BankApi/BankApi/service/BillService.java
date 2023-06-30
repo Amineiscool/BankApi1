@@ -1,5 +1,6 @@
 package com.BankApi.BankApi.service;
 
+import com.BankApi.BankApi.errorException.exception.ResourceNotFoundException;
 import com.BankApi.BankApi.model.Account;
 import com.BankApi.BankApi.model.Bill;
 import com.BankApi.BankApi.repo.AccountRepository;
@@ -24,15 +25,21 @@ public class BillService {
 
     }
 
+
     //createABill
-    public Bill addBill(Long accountId, Bill bill) {
-        Account account = accountRepository.findById(accountId).orElse(null);
-        if (account != null) {
-            bill.setAccount(account);
-            return billRepository.save(bill);
-        }
-        return null; // Handle the case when the account is not found
+    public Bill createBill(Bill bill, Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+
+        bill.setAccount(account);
+        // Save the bill to the database
+        Bill createdBill = billRepository.save(bill);
+
+        // Optionally, you can perform additional operations or validations here
+
+        return createdBill;
     }
+
 
     //get all bills for a specific account using its id
     public List<Bill> getAllBillForASpecificAccount(Long id) {
@@ -77,5 +84,5 @@ public class BillService {
         return billRepository.findById(billId).orElse(null);
     }
 
-        // ...
+
     }

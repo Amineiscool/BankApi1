@@ -12,13 +12,17 @@ public class CustomReply<T> {
     public CustomReply(int code, String message, Account account) {
         this.code = code;
         this.message = message;
+        this.successData = (T) account;
     }
 
     public CustomReply(int code, String message, T successData ) {
         this.code = code;
         this.message = message;
-        this.successData = successData;
+
     }
+
+
+
 
     public CustomReply(int code, String message) {
         this.code = code;
