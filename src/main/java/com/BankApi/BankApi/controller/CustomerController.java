@@ -56,6 +56,8 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {
+
+        CustomReply message= new CustomReply(202,"deleted successfully");
         boolean deleted = customerService.deleteCustomer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

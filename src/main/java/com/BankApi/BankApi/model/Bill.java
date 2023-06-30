@@ -1,7 +1,6 @@
 package com.BankApi.BankApi.model;
 
 import com.BankApi.BankApi.enums.Status;
-
 import javax.persistence.*;
 
 @Entity
@@ -10,7 +9,6 @@ public class Bill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     @Column
@@ -37,9 +35,16 @@ public class Bill {
     @Column(name = "payment_amount")
     private Double paymentAmount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
+
+    // Constructors
+
+    public Bill() {
+    }
+
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -113,10 +118,10 @@ public class Bill {
         this.paymentAmount = paymentAmount;
     }
 
-
     public Account getAccount() {
         return account;
     }
+
     public void setAccount(Account account) {
         this.account = account;
     }

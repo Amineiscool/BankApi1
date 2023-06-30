@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Long> {
 
-    List<Bill> findByAccountId(Long accountId);
+
 
     @Query(value = "SELECT * FROM bills WHERE account_id = :accountId", nativeQuery = true)
     List<Bill> findAllBillsByAccountId(@Param("accountId") Long accountId);

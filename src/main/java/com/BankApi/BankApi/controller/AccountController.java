@@ -1,7 +1,7 @@
 package com.BankApi.BankApi.controller;
 
+import com.BankApi.BankApi.errorException.exception.ResourceNotFoundException;
 import com.BankApi.BankApi.model.Account;
-import com.BankApi.BankApi.reply.CustomReply;
 import com.BankApi.BankApi.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/accounts")
@@ -20,79 +19,58 @@ public class AccountController {
     @Autowired
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
-        }
+    }
 
     @GetMapping
     public ResponseEntity<List<Account>> getAllAccounts() {
-        //int code = HttpStatus.OK.value();
-        // String massage = "Success";
-        List<Account> accounts = (List<Account>) accountService.getAllAccounts();
+        List<Account> accounts = accountService.getAllAccounts();
+        return ResponseEntity.ok(accounts);
+    }
 
-        //return ResponseEntity.ok(accounts);
-        return (new ResponseEntity<>(accounts, HttpStatus.OK));
-        }
-
-   /* @GetMapping("/{id}")
-    public ResponseEntity<Account> getAccountById(@PathVariable Long accountId, @RequestBody String exceptionMessage) {
-        Account account = accountService.getAccountById(accountId, exceptionMessage);
-        if (account != null) {
+    @GetMapping("/{accountId}")
+    public ResponseEntity<?> getAccountById(@PathVariable Long accountId) {
+        try {
+            Account account = accountService.getAccountById(accountId);
             return ResponseEntity.ok(account);
-        } else {
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/customers/{customerId}/accounts")
+    public ResponseEntity<?> createAccount(@RequestBody Account accountInfo, @PathVariable Long customerId) {
+        try {
+            Account createdAccount = accountService.createAccount(accountInfo, customerId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdAccount);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
+    @PutMapping("/{accountId}")
+    public ResponseEntity<Account> updateAccount(@PathVariable Long accountId, @RequestBody Account accountInfo) {
+        try {
+            Account updatedAccount = accountService.updateAccount(accountId, accountInfo);
+            return ResponseEntity.ok(updatedAccount);
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-    }*/
+    }
 
-    @GetMapping("/accounts/{accountId}")
-    public ResponseEntity<?> getAccountById(@PathVariable Long accountId) {
-        String exceptionMessage = "error fetching account";
-        //int CustomerReply = HttpStatus.OK.value();
-        Account responseData = this.accountService.getAccountById(accountId, exceptionMessage);
-        if (responseData != null) {
-        return ResponseEntity.ok(responseData);
-        } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionMessage);
-        }
-        }
-
-
-    @PostMapping("/customers/{customerID}/accounts")
-    public ResponseEntity<?> createAccount(@RequestBody Account accountInfo, @PathVariable Long customerId) {
-        String message = "error fetching creating customers account";
-        int code = HttpStatus.CREATED.value();
-        Account createdAccount = this.accountService.createAccount(accountInfo, customerId, code, message);
-        return (new ResponseEntity<>(createdAccount, HttpStatus.CREATED));
-        }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @RequestBody Account account) {
-        Account updatedAccount = accountService.updateAccount(id, account);
-        if (updatedAccount != null) {
-        return ResponseEntity.ok(updatedAccount);
-        } else {
-        return ResponseEntity.notFound().build();
-        }
-        }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
-        accountService.deleteAccount(id);
+    @DeleteMapping("/{accountId}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long accountId) {
+        accountService.deleteAccount(accountId);
         return ResponseEntity.noContent().build();
-        }
+    }
 
-    @GetMapping("/customers/{customerId}/accounts")
-    public ResponseEntity<?> getAllAccountsByCustomerId(@PathVariable Long customerId) {
-        String message = "Success";
-        String errorResponse = "Error fetching customers accounts";
-        Optional<Account> successData = this.accountService.getAccountsByCustomerId(customerId, message);
-
-        if (successData.isPresent()) {
-        CustomReply<Account> successResponse = new CustomReply<>(HttpStatus.OK.value(), message, successData.get());
-        return ResponseEntity.ok(successResponse);
-        } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
-
-
-        }
-
-        }
+//    @GetMapping("/customers/{customerId}/accounts")
+//    public ResponseEntity<?> getAllAccountsByCustomerId(@PathVariable Long customerId) {
+//        try {
+//            List<Account> accounts = accountService.getAccountsByCustomerId(customerId);
+//            return ResponseEntity.ok(accounts);
+//        } catch (ResourceNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
+}
