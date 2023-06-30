@@ -14,7 +14,8 @@ import java.util.List;
 @RequestMapping("/accounts")
 public class DepositController {
 
-   /* private final TransactionService transactionService;
+
+    private final TransactionService transactionService;
 
     @Autowired
     public DepositController(TransactionService transactionService) {
@@ -50,5 +51,5 @@ public class DepositController {
     public ResponseEntity<Void> deleteDeposit(@PathVariable Long depositId) {
         transactionService.deleteDeposit(depositId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }*/
+    }
 }

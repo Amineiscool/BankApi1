@@ -16,7 +16,7 @@ import java.util.ListResourceBundle;
 public class TransactionController {
 
 
-   /* private final TransactionService transactionService;
+    private final TransactionService transactionService;
 
     @Autowired
     public TransactionController(TransactionService transactionService) {
@@ -31,7 +31,7 @@ public class TransactionController {
     @GetMapping("/transactions/{transactionId}")
     public ResponseEntity<Transaction> getTransactionById(@PathVariable Long transactionId) {
         return new ResponseEntity<>(transactionService.getTransactionById(transactionId), HttpStatus.OK);
-    }*/
+    }
 
 }
 

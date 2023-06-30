@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 public class TransactionService {
 
-   /* private final TransactionRepository transactionRepository;
+   private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
 
     @Autowired
@@ -147,7 +147,7 @@ public class TransactionService {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return now.format(formatter);
-    }*/
+    }
 }
 
 

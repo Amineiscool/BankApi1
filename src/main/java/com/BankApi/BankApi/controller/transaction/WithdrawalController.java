@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/accounts")
 public class WithdrawalController {
 
-   /* private final TransactionService transactionService;
+    private final TransactionService transactionService;
 
     @Autowired
     public WithdrawalController(TransactionService transactionService) {
@@ -49,5 +49,5 @@ public class WithdrawalController {
     public ResponseEntity<Void> deleteWithdrawal(@PathVariable Long withdrawalId) {
         transactionService.deleteWithdrawal(withdrawalId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }*/
+    }
 }
