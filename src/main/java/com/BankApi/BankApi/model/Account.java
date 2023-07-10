@@ -14,22 +14,35 @@ import javax.persistence.*;
 @Entity
 @Table(name = "accounts")
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String accountNumber;
+    @Column
+    private String nickname;
 
-    private BigDecimal balance;
+    @Column
+    private Integer rewards;
 
-    // Constructors, Getters and Setters
+    @Column
+    private Double balance;
+
+    @Column
+    private AccountType type;
+
+    @JsonIgnoreProperties("account")
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Bill> bills;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    // Constructors
 
     public Account() {
-    }
-
-    public Account(String accountNumber, BigDecimal balance) {
-        this.accountNumber = accountNumber;
-        this.balance = balance;
     }
 
     // Getters and Setters
@@ -42,36 +55,51 @@ public class Account {
         this.id = id;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public BigDecimal getBalance() {
+    public Integer getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(Integer rewards) {
+        this.rewards = rewards;
+    }
+
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
-    public void withdraw(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Withdrawal amount must be greater than zero");
-        }
-        if (balance.compareTo(amount) < 0) {
-            throw new InsufficientFundsException("Insufficient funds for withdrawal");
-        }
-        balance = balance.subtract(amount);
+
+    public AccountType getType() {
+        return type;
     }
 
-    public void deposit(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Deposit amount must be greater than zero");
-        }
-        balance = balance.add(amount);
+    public void setType(AccountType type) {
+        this.type = type;
     }
 
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 }

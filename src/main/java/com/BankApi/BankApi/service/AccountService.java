@@ -7,6 +7,8 @@ import com.BankApi.BankApi.repo.AccountRepository;
 import com.BankApi.BankApi.repo.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,7 @@ public class AccountService {
         account.setRewards(0);
         account.setBalance(accountInfo.getBalance());
         account.setType(accountInfo.getType());
-        account.setCustomer(customer);
+        // account.setCustomer(customer);
 
         return accountRepository.save(account);
     }
@@ -62,11 +64,4 @@ public class AccountService {
     public void deleteAccount(Long accountId) {
         accountRepository.deleteById(accountId);
     }
-//
-//    public List<Account> getAccountsByCustomerId(Long customerId) throws ResourceNotFoundException {
-//        customerRepository.findById(customerId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-//
-//        return accountRepository.findByCustomerId(customerId);
-//    }
 }
