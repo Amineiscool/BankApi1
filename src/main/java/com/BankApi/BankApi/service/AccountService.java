@@ -41,7 +41,7 @@ public class AccountService {
         account.setRewards(0);
         account.setBalance(accountInfo.getBalance());
         account.setType(accountInfo.getType());
-        account.setCustomer(customer);
+       // account.setCustomer(customer);
 
         return accountRepository.save(account);
     }
