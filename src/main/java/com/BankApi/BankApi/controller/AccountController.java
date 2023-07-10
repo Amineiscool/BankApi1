@@ -37,7 +37,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/customers/{customerId}/accounts")
+    @PostMapping("/accounts/customers/{customerId}/accounts")
     public ResponseEntity<?> createAccount(@RequestBody Account accountInfo, @PathVariable Long customerId) {
         try {
             Account createdAccount = accountService.createAccount(accountInfo, customerId);
@@ -48,7 +48,7 @@ public class AccountController {
     }
 
 
-    @PutMapping("/{accountId}")
+    @PutMapping("/accounts/{accountId}")
     public ResponseEntity<Account> updateAccount(@PathVariable Long accountId, @RequestBody Account accountInfo) {
         try {
             Account updatedAccount = accountService.updateAccount(accountId, accountInfo);
