@@ -1,44 +1,35 @@
 package com.BankApi.BankApi.model;
 
 import com.BankApi.BankApi.enums.AccountType;
+import com.BankApi.BankApi.errorException.exception.InsufficientFundsException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "accounts")
 public class Account {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String nickname;
+    private String accountNumber;
 
-    @Column
-    private Integer rewards;
+    private BigDecimal balance;
 
-    @Column
-    private Double balance;
-
-    @Column
-    private AccountType type;
-
-    @JsonIgnoreProperties("account")
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Bill> bills;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    // Constructors
+    // Constructors, Getters and Setters
 
     public Account() {
+    }
+
+    public Account(String accountNumber, BigDecimal balance) {
+        this.accountNumber = accountNumber;
+        this.balance = balance;
     }
 
     // Getters and Setters
@@ -51,51 +42,36 @@ public class Account {
         this.id = id;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
-    public Integer getRewards() {
-        return rewards;
-    }
-
-    public void setRewards(Integer rewards) {
-        this.rewards = rewards;
-    }
-
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
-
-    public AccountType getType() {
-        return type;
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be greater than zero");
+        }
+        if (balance.compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Insufficient funds for withdrawal");
+        }
+        balance = balance.subtract(amount);
     }
 
-    public void setType(AccountType type) {
-        this.type = type;
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be greater than zero");
+        }
+        balance = balance.add(amount);
     }
 
-    public List<Bill> getBills() {
-        return bills;
-    }
-
-    public void setBills(List<Bill> bills) {
-        this.bills = bills;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
 }

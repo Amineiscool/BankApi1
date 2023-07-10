@@ -1,4 +1,4 @@
-2023-06-30 10:40:01.465  INFO 19700 --- [main] com.BankApi.BankApi.BankApiApplication   : Starting BankApiApplication using Java 20.0.1 on MMaldonado1017 with PID 19700 (C:\Users\migue\IdeaProjects\BankApi12\target\classes started by migue in C:\Users\migue\IdeaProjects\BankApi12)
+023-06-30 10:40:01.465  INFO 19700 --- [main] com.BankApi.BankApi.BankApiApplication   : Starting BankApiApplication using Java 20.0.1 on MMaldonado1017 with PID 19700 (C:\Users\migue\IdeaProjects\BankApi12\target\classes started by migue in C:\Users\migue\IdeaProjects\BankApi12)
 2023-06-30 10:40:01.471  INFO 19700 --- [main] com.BankApi.BankApi.BankApiApplication   : No active profile set, falling back to 1 default profile: "default"
 2023-06-30 10:40:02.502  INFO 19700 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
 2023-06-30 10:40:02.617  INFO 19700 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 99 ms. Found 5 JPA repository interfaces.

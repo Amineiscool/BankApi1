@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/accounts")
@@ -37,18 +37,17 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/accounts/customers/{customerId}/accounts")
+    @PostMapping("/customers/{customerId}/accounts")
     public ResponseEntity<?> createAccount(@RequestBody Account accountInfo, @PathVariable Long customerId) {
         try {
-            Account createdAccount = accountService.createAccount(accountInfo, customerId);
+            Account createdAccount = accountService.createAccount(accountInfo);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdAccount);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-
-    @PutMapping("/accounts/{accountId}")
+    @PutMapping("/{accountId}")
     public ResponseEntity<Account> updateAccount(@PathVariable Long accountId, @RequestBody Account accountInfo) {
         try {
             Account updatedAccount = accountService.updateAccount(accountId, accountInfo);
@@ -63,14 +62,4 @@ public class AccountController {
         accountService.deleteAccount(accountId);
         return ResponseEntity.noContent().build();
     }
-
-//    @GetMapping("/customers/{customerId}/accounts")
-//    public ResponseEntity<?> getAllAccountsByCustomerId(@PathVariable Long customerId) {
-//        try {
-//            List<Account> accounts = accountService.getAccountsByCustomerId(customerId);
-//            return ResponseEntity.ok(accounts);
-//        } catch (ResourceNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
-//    }
 }

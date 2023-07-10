@@ -15,12 +15,10 @@ import java.util.Optional;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final CustomerRepository customerRepository;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository) {
+    public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-        this.customerRepository = customerRepository;
     }
 
     public List<Account> getAllAccounts() {
@@ -32,29 +30,16 @@ public class AccountService {
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
     }
 
-    public Account createAccount(Account accountInfo, Long customerId) throws ResourceNotFoundException {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-
-        Account account = new Account();
-        account.setNickname(accountInfo.getNickname());
-        account.setRewards(0);
-        account.setBalance(accountInfo.getBalance());
-        account.setType(accountInfo.getType());
-        account.setCustomer(customer);
-
-        return accountRepository.save(account);
+    public Account createAccount(Account accountInfo) {
+        return accountRepository.save(accountInfo);
     }
-
 
     public Account updateAccount(Long accountId, Account accountInfo) throws ResourceNotFoundException {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
-        account.setNickname(accountInfo.getNickname());
-        account.setRewards(accountInfo.getRewards());
+        account.setAccountNumber(accountInfo.getAccountNumber());
         account.setBalance(accountInfo.getBalance());
-        account.setType(accountInfo.getType());
 
         return accountRepository.save(account);
     }
@@ -62,11 +47,4 @@ public class AccountService {
     public void deleteAccount(Long accountId) {
         accountRepository.deleteById(accountId);
     }
-//
-//    public List<Account> getAccountsByCustomerId(Long customerId) throws ResourceNotFoundException {
-//        customerRepository.findById(customerId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-//
-//        return accountRepository.findByCustomerId(customerId);
-//    }
 }
