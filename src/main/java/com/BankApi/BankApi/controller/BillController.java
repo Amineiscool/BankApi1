@@ -34,8 +34,6 @@ public class BillController {
         }
     }
 
-
-
     @GetMapping
     public ResponseEntity<List<Bill>> getAllBills(@PathVariable Long accountId) {
         return new ResponseEntity<>(billService.getAllBillForASpecificAccount(accountId), HttpStatus.OK);
@@ -58,7 +56,7 @@ public class BillController {
         }
     }
 
-    @DeleteMapping("/{billId}")
+    @DeleteMapping("/bills/{billId}")
     public ResponseEntity<Void> removeBill(@PathVariable Long billId) {
         billService.deleteBill(billId);
         return ResponseEntity.noContent().build();
