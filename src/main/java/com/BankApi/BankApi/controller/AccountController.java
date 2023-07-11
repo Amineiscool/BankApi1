@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/accounts")
 public class AccountController {
@@ -37,7 +38,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/accounts/customers/{customerId}/accounts")
+    @PostMapping("/customers/{customerId}/accounts")
     public ResponseEntity<?> createAccount(@RequestBody Account accountInfo, @PathVariable Long customerId) {
         try {
             Account createdAccount = accountService.createAccount(accountInfo, customerId);
@@ -47,8 +48,7 @@ public class AccountController {
         }
     }
 
-
-    @PutMapping("/accounts/{accountId}")
+    @PutMapping("/{accountId}")
     public ResponseEntity<Account> updateAccount(@PathVariable Long accountId, @RequestBody Account accountInfo) {
         try {
             Account updatedAccount = accountService.updateAccount(accountId, accountInfo);
@@ -64,13 +64,13 @@ public class AccountController {
         return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping("/customers/{customerId}/accounts")
-//    public ResponseEntity<?> getAllAccountsByCustomerId(@PathVariable Long customerId) {
-//        try {
-//            List<Account> accounts = accountService.getAccountsByCustomerId(customerId);
-//            return ResponseEntity.ok(accounts);
-//        } catch (ResourceNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
-//    }
+    @GetMapping("/customers/{customerId}/accounts")
+    public ResponseEntity<?> getAllAccountsByCustomerId(@PathVariable Long customerId) {
+        try {
+            List<Account> accounts = accountService.getAccountsByCustomerId(customerId);
+            return ResponseEntity.ok(accounts);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }

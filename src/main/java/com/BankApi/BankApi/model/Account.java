@@ -102,4 +102,10 @@ public class Account {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
+    public void withdraw(BigDecimal bigDecimal) {
+    }
+
+    public void deposit(BigDecimal bigDecimal) {
+    }
 }

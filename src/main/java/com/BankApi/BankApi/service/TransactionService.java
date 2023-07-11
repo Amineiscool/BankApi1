@@ -63,21 +63,20 @@ public class TransactionService {
 
     // Create a new withdrawal for a specific account
     public Withdrawal createWithdrawal(Long accountId, Withdrawal withdrawal) {
-        Account account = accountRepository.findById(accountId)
+        Account account = accountRepository.findById(accountId) //finding an instance of an account by its id if it doesnt exist it throws exception
                 .orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         withdrawal.setType(TransactionType.WITHDRAWAL);
         withdrawal.setTransactionDate(LocalDateTime.now());
 
-        if (!(account.getBalance().compareTo(BigDecimal.valueOf(withdrawal.getAmount())) >= 0)) {
+        BigDecimal withdrawalAmount = BigDecimal.valueOf(withdrawal.getAmount());
+        if (account.getBalance().compareTo(withdrawal.getAmount()) >= 0) {
+            account.withdraw(withdrawalAmount);
+            withdrawal.setAccount(account);
+            return withdrawalRepository.save(withdrawal);
+        } else {
             throw new InsufficientFundsException("Insufficient funds for withdrawal");
         }
-
-        account.withdraw(BigDecimal.valueOf(withdrawal.getAmount()));
-
-        withdrawal.setAccount(account);
-
-        return withdrawalRepository.save(withdrawal);
     }
 
     // Retrieve all transactions of a specific type associated with an account
@@ -86,6 +85,7 @@ public class TransactionService {
     }
 
     // Retrieve a transaction by its ID
+    //Optional communicates to the user that there might not be something for what you are looking for in this instance its the transaction id that might not be available
     public Optional<Transaction> getTransactionById(Long transactionId) {
         return transactionRepository.findById(transactionId);
     }

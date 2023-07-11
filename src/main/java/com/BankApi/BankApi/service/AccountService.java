@@ -43,7 +43,7 @@ public class AccountService {
         account.setRewards(0);
         account.setBalance(accountInfo.getBalance());
         account.setType(accountInfo.getType());
-        // account.setCustomer(customer);
+         account.setCustomer(customer);
 
         return accountRepository.save(account);
     }
@@ -63,5 +63,9 @@ public class AccountService {
 
     public void deleteAccount(Long accountId) {
         accountRepository.deleteById(accountId);
+    }
+
+    public List<Account> getAccountsByCustomerId(Long customerId) {
+        return null;
     }
 }

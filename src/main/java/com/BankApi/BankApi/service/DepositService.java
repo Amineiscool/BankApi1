@@ -30,7 +30,7 @@ public class DepositService {
 
     // Create a new deposit for a specific account
     public Deposit createDeposit(Long accountId, Deposit deposit) {
-        Account account = accountRepository.findById(accountId)
+        Account account = accountRepository.findById(accountId) //finding an account by its id if not found will throw exception
                 .orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         deposit.setType(TransactionType.DEPOSIT);
@@ -61,7 +61,7 @@ public class DepositService {
 
     // Update an existing deposit
     public Deposit updateDeposit(Long depositId, Deposit updatedDeposit) {
-        Deposit deposit = depositRepository.findById(depositId)
+        Deposit deposit = depositRepository.findById(depositId) //searching for a deposit instance by its depositId if not found it throws exception
                 .orElseThrow(() -> new TransactionNotFoundException("Deposit not found"));
 
         deposit.setType(updatedDeposit.getType());
